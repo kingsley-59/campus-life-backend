@@ -19,7 +19,10 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.8.4",
     "mongoose-geojson-schema": "^2.2.4",
-    "mongoose-paginate-v2": "^1.7.1"
+    "mongoose-paginate-v2": "^1.7.1",
+    "passport": "^0.6.0",
+    "passport-google-oauth2": "^0.2.0",
+    "passport-jwt": "^4.0.1"
   },
   "devDependencies": {
     "eslint": "^8.33.0",

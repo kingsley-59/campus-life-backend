@@ -13,6 +13,9 @@ const userSchema = new mongoose.Schema({
   password: {
     type: mongoose.Schema.Types.Mixed,
   },
+  googleId: {
+    type: String,
+  },
   role: {
     type: String,
     default: "user",
