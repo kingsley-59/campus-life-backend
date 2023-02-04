@@ -15,7 +15,7 @@ exports.getAllLodges = async (req, res) => {
     try {
         const { page, size } = req.query;
         const { limit, offset } = getPagination(page, size);
-        const lodges = await Lodge.paginate({}, {offset, limit});
+        const lodges = await Lodge.paginate({}, {select: "-", offset, limit});
 
 
         return apiResponse.successResponseWithData(res, "success", lodges);

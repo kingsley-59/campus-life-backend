@@ -52,6 +52,10 @@ const LodgeSchema = new mongoose.Schema(
 
         isVerified: Boolean,
 
+        description: {
+            type: String
+        },
+
         summary: {
             type: String
         },
