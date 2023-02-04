@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
+const mongoosePaginate = require('mongoose-paginate-v2');
 mongoose.set("strictQuery", false);
+mongoose.plugin(mongoosePaginate);
 
 const connectDB = async () => {
   try {

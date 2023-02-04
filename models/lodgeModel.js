@@ -1,7 +1,8 @@
-const mongoose = require('mongoose')
-const geojson = require('mongoose-geojson-schema')
+const mongoose = require('mongoose');
+// eslint-disable-next-line no-unused-vars
+const geojson = require('mongoose-geojson-schema');
 
-const contactSchema = mongoose.Schema({
+const contactSchema = new mongoose.Schema({
     name: {
         type: String
     },
@@ -14,9 +15,10 @@ const contactSchema = mongoose.Schema({
         type: String,
         required: true
     }
-})
+});
 
-const LodgeSchema = mongoose.Schema(
+
+const LodgeSchema = new mongoose.Schema(
     {
         title: {
             type: String,
@@ -30,7 +32,7 @@ const LodgeSchema = mongoose.Schema(
             type: String,
         },
 
-        locationtext: {
+        locationText: {
             type: String
         },
 
@@ -71,10 +73,12 @@ const LodgeSchema = mongoose.Schema(
 
     },
     { timestamps: true }
-)
+);
 
 
-module.exports = mongoose.Model('Lodge', LodgeSchema)
+
+const Lodge = mongoose.model('Lodge', LodgeSchema);
+module.exports = Lodge;
 
 
 
