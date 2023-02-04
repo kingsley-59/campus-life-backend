@@ -4,9 +4,18 @@ const { body } = require('express-validator');
 const User = require('../models/userModel');
 
 
+const getPagination = (page, size) => {
+    const limit = size ? +size : 10;
+    const offset = page ? page * limit : 0;
+
+    return { limit, offset };
+};
+
 exports.getAllLodges = async (req, res) => {
     try {
-        const lodges = await Lodge.paginate({}, {});
+        const { page, size } = req.query;
+        const { limit, offset } = getPagination(page, size);
+        const lodges = await Lodge.paginate({}, {offset, limit});
 
 
         return apiResponse.successResponseWithData(res, "success", lodges);
@@ -50,7 +59,7 @@ exports.suggestLodge = async (req, res) => {
         const newSuggestion = new Lodge({ ...req.body });
         await newSuggestion.save();
 
-        return apiResponse.successResponse(res, "New suggestion has been added.")
+        return apiResponse.successResponse(res, "New suggestion has been added.");
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }
