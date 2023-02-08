@@ -12,11 +12,11 @@ app.use(cors());
 app.use(express.json());
 
 const { routeManager } = require("./routes/rts.js");
-const { userRoute } = require("./routes/userRoutes.js");
+// const { userRoute } = require("./routes/userRoutes.js");
 const { lodgeRoute } = require("./routes/lodgeRoutes.js");
 
 app.use("/", routeManager);
-app.use("/users", userRoute);
+// app.use("/users", userRoute);
 app.use("/lodges", lodgeRoute);
 
 app.listen(PORT, () => {

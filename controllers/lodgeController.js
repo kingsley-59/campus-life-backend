@@ -56,7 +56,10 @@ exports.validations = [
 
 exports.suggestLodge = async (req, res) => {
     try {
-        const newSuggestion = new Lodge({ ...req.body });
+        const { displayImage, images } = req.files;
+        const displayImageUrl = displayImage.path;
+        const imagesPaths = images.map(image => image.path);
+        const newSuggestion = new Lodge({ ...req.body, displayImage: displayImageUrl, images: imagesPaths });
         await newSuggestion.save();
 
         return apiResponse.successResponse(res, "New suggestion has been added.");
