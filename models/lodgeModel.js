@@ -48,9 +48,15 @@ const LodgeSchema = new mongoose.Schema(
             type: Number
         },
 
-        isAvailable: Boolean,
+        isAvailable: {
+            type: Boolean,
+            default: false
+        },
 
-        isVerified: Boolean,
+        isVerified: {
+            type: Boolean,
+            default: false
+        },
 
         description: {
             type: String
@@ -69,10 +75,12 @@ const LodgeSchema = new mongoose.Schema(
         contactInfo: contactSchema,
 
         likes: {
-            type: Number
+            type: Number,
+            default: 0
         },
         dislikes: {
-            type: Number
+            type: Number,
+            default: 0
         }
 
     },

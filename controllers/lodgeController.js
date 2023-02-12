@@ -38,7 +38,7 @@ exports.getLodge = async (req, res) => {
 
 exports.validations = [
     body('title'),
-    body('displayTtle'),
+    body('displayTitle'),
     body('type'),
     body('locationText'),
     body('town'),
@@ -49,17 +49,24 @@ exports.validations = [
     body('summary'),
     body('displayImage'),
     body('images'),
-    body('contactInfo'),
-    body('likes'),
-    body('dislikes'),
+    body('contact_name'),
+    body('contact_email'),
+    body('contact_phone'),
 ];
 
 exports.suggestLodge = async (req, res) => {
     try {
+        const { contact_name, contact_email, contact_phone } = req.body;
         const { displayImage, images } = req.files;
-        const displayImageUrl = displayImage.path;
+        const displayImageUrl = displayImage[0].path;
         const imagesPaths = images.map(image => image.path);
-        const newSuggestion = new Lodge({ ...req.body, displayImage: displayImageUrl, images: imagesPaths });
+
+        const contactInfo = {
+            name: contact_name,
+            email: contact_email,
+            phone: contact_phone
+        };
+        const newSuggestion = new Lodge({ ...req.body, displayImage: displayImageUrl, images: imagesPaths, contactInfo });
         await newSuggestion.save();
 
         return apiResponse.successResponse(res, "New suggestion has been added.");
