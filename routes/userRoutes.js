@@ -2,6 +2,7 @@ const express = require("express");
 const userRoute = express.Router();
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const adminAuth = require("../middleware/adminAuth");
 
 require("../middleware/passportConfig")(passport);
 
@@ -14,7 +15,7 @@ const {
 const { register, login, auth, tokenIsValid } = require("../middleware/auth");
 
 userRoute.get("/getUser/:id", auth, getUser);
-userRoute.get("/getUsers", getUsers);
+userRoute.get("/getUsers", auth, adminAuth, getUsers);
 userRoute.post("/register", register);
 userRoute.post("/login", login);
 userRoute.post("/tokenIsValid", tokenIsValid);
@@ -57,6 +58,7 @@ userRoute.get(
   (req, res, next) => {
     console.log(req.user);
     res.send("Welcome");
+    next();
   }
 );
 

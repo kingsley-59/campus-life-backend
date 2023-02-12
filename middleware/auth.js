@@ -7,6 +7,13 @@ const secretKey = process.env.SECRET;
 const register = async (req, res) => {
   let { email, password } = req.body;
   const salt = await bcrypt.genSalt();
+  let role;
+
+  if (email === process.env.bossMail) {
+      role = "superadmin";
+  } else {
+      role = "user";
+  }
 
   bcrypt.hash(password, salt, async (err, hash) => {
     if (err) {
@@ -24,7 +31,8 @@ const register = async (req, res) => {
         password: hash,
         lastName: req.body.lastName,
         firstName: req.body.firstName,
-        phoneNumber: req.body.phoneNumber,
+        institution: req.body.institution,
+        role: role
       });
       user.save((err, user) => {
         if (err) {

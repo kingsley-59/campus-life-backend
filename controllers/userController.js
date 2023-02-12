@@ -45,10 +45,6 @@ const updateUser = async (req, res) => {
         .status(401)
         .send({ data: {}, message: "Unauthorized User!", status: 1 });
 
-    const user = await User.findOne({
-      _id: id,
-    });
-
     const updatedUser = await User.findByIdAndUpdate(id, req.body);
 
     res
@@ -79,7 +75,7 @@ const deleteUser = async (req, res) => {
         status: 1,
       });
 
-    const deletedUser = await User.findByIdAndRemove(id);
+    await User.findByIdAndRemove(id);
     res.status(201).send({ message: "User Deleted", status: 0 });
   } catch (err) {
     res.status(500).send({ data: {}, error: `${err.message}`, status: 1 });
