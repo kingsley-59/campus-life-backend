@@ -5,7 +5,7 @@ const connectDB = require("./config/db.js");
 
 const app = express();
 dotenv.config();
-connectDB();
+
 
 const PORT = process.env.PORT || 3030;
 app.use(cors());
@@ -21,8 +21,10 @@ app.use("/users", userRoute);
 app.use("/admin", adminRoute);
 app.use("/lodges", lodgeRoute);
 
-app.listen(PORT, () => {
-  console.log(
-    `CampusLife server running in ${process.env.NODE_ENV} mode on port ${PORT}`
-  );
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(
+      `CampusLife server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+    );
+  });
 });
