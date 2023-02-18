@@ -34,7 +34,7 @@ userRoute.get(
   passport.authenticate("google", { session: false }),
   (req, res) => {
     jwt.sign(
-      { user: req.user },
+      { id: req.user._id },
       process.env.secretKey,
       { expiresIn: "1h" },
       (err, token) => {

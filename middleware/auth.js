@@ -29,8 +29,7 @@ const register = async (req, res) => {
       const user = new User({
         email: email,
         password: hash,
-        lastName: req.body.lastName,
-        firstName: req.body.firstName,
+        fullname: req.body.fullname,
         institution: req.body.institution,
         role: role
       });
@@ -99,7 +98,7 @@ const login = (req, res) => {
 };
 
 const auth = (req, res, next) => {
-  const token = req.header("x-auth-token");
+  const token = req.header("authorization");
   if (!token)
     return res
       .status(401)
@@ -117,7 +116,7 @@ const auth = (req, res, next) => {
 
 const tokenIsValid = async (req, res) => {
   try {
-    const token = req.header("x-auth-token");
+    const token = req.header("authorization");
     if (!token) return res.json(false);
 
     const verified = jwt.verify(token, process.env.SECRET);
