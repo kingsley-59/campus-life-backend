@@ -98,7 +98,7 @@ const login = (req, res) => {
 };
 
 const auth = (req, res, next) => {
-  const token = req.header("authorization");
+  const token = req.header("x-auth-token");
   if (!token)
     return res
       .status(401)
@@ -116,7 +116,7 @@ const auth = (req, res, next) => {
 
 const tokenIsValid = async (req, res) => {
   try {
-    const token = req.header("authorization");
+    const token = req.header("x-auth-token");
     if (!token) return res.json(false);
 
     const verified = jwt.verify(token, process.env.SECRET);
