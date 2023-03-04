@@ -15,11 +15,13 @@ const { routeManager } = require("./routes/rts.js");
 const { userRoute } = require("./routes/userRoutes.js");
 const { adminRoute } = require("./routes/adminRoutes.js");
 const { lodgeRoute } = require("./routes/lodgeRoutes.js");
+const { suggestedLodgeRoute } = require("./routes/suggestedLodgeRoutes.js");
 const { commentRoute } = require("./routes/commentRoutes.js");
 
 app.use("/", routeManager);
 app.use("/users", userRoute);
 app.use("/admin", adminRoute);
+app.use("/suggestlodges", suggestedLodgeRoute);
 app.use("/lodges", lodgeRoute);
 app.use("/lodges/comments", commentRoute);
 

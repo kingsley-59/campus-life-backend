@@ -1,5 +1,5 @@
 const apiResponse = require('../helpers/apiResponse');
-const Lodge = require('../models/lodgeModel');
+const SuggestedLodge = require('../models/suggestedLodgeModel');
 const { body } = require('express-validator');
 // const User = require('../models/userModel');
 
@@ -10,11 +10,11 @@ const { body } = require('express-validator');
 //     return { limit, offset };
 // };
 
-exports.getAllLodges = async (req, res) => {
+exports.getSuggestedLodges = async (req, res) => {
     try {
         // const { page, size } = req.query;
         // const { limit, offset } = getPagination(page, size);, {select: "-", offset, limit}
-        const lodges = await Lodge.find({});
+        const lodges = await SuggestedLodge.find({});
 
         return apiResponse.successResponseWithData(res, "success", lodges);
     } catch (error) {
@@ -22,13 +22,13 @@ exports.getAllLodges = async (req, res) => {
     }
 };
 
-exports.getLodge = async (req, res) => {
+exports.getSuggestedLodge = async (req, res) => {
     try {
         let { id } = req.params;
-        const lodge = await Lodge.findById(id);
+        const lodge = await SuggestedLodge.findById(id);
 
         if (!lodge) return apiResponse.notFoundResponse(res, "No lodge was found with that id.");
-        return apiResponse.successResponseWithData(res, "Lodge found successfully", lodge);
+        return apiResponse.successResponseWithData(res, "SuggestedLodge found successfully", lodge);
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }
@@ -53,7 +53,7 @@ exports.validations = [
     body('location'),
 ];
 
-exports.createLodge = async (req, res) => {
+exports.suggestLodge = async (req, res) => {
     try {
         const { 
             address, caretakernumber, email, fullname, institution, lat, lng,
@@ -64,7 +64,7 @@ exports.createLodge = async (req, res) => {
         const lodgePictureUrl = lodgepicture[0].path;
         const imagesPaths = lodgemultiplepicture.map(image => image.path);
 
-        const newSuggestion = new Lodge({ 
+        const newSuggestion = new SuggestedLodge({ 
             address,
             caretakernumber,
             email,
@@ -83,33 +83,33 @@ exports.createLodge = async (req, res) => {
         });
         await newSuggestion.save();
 
-        return apiResponse.successResponse(res, "New lodge has been added.");
+        return apiResponse.successResponse(res, "New suggestion has been added.");
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }
 };
 
-exports.updateLodge = async (req, res) => {
+exports.updateSuggestedLodge = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const lodge = await Lodge.findByIdAndUpdate(id, req.body);
-        if (!lodge) return apiResponse.notFoundResponse(res, "Lodge not found");
+        const lodge = await SuggestedLodge.findByIdAndUpdate(id, req.body);
+        if (!lodge) return apiResponse.notFoundResponse(res, "SuggestedLodge not found");
 
-        return apiResponse.successResponseWithData(res, "Lodge updated successfully.", lodge);
+        return apiResponse.successResponseWithData(res, "SuggestedLodge updated successfully.", lodge);
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }
 };
 
-exports.deleteLodge = async (req, res) => {
+exports.deleteSuggestedLodge = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const lodge = await Lodge.findByIdAndDelete(id, req.body);
-        if (!lodge) return apiResponse.notFoundResponse(res, "Lodge not found");
+        const lodge = await SuggestedLodge.findByIdAndDelete(id, req.body);
+        if (!lodge) return apiResponse.notFoundResponse(res, "SuggestedLodge not found");
 
-        return apiResponse.successResponseWithData(res, "Lodge deleted successfully.", lodge);
+        return apiResponse.successResponseWithData(res, "SuggestedLodge deleted successfully.", lodge);
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }

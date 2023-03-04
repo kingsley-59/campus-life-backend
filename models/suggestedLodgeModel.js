@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const lodgeSchema = new mongoose.Schema({
+const suggestedLodgeSchema = new mongoose.Schema({
     address: {
         type: String,
     },
@@ -54,6 +54,6 @@ const lodgeSchema = new mongoose.Schema({
     { timestamps: true }
 );
 
-const Lodge = mongoose.model('lodge', lodgeSchema);
+const SuggestedLodge = mongoose.model('suggestedLodge', suggestedLodgeSchema);
 
-module.exports = Lodge;
+module.exports = SuggestedLodge;
