@@ -1,17 +1,17 @@
 const express = require("express");
 const adminRoute = express.Router();
-const adminAuth = require("../middleware/adminAuth");
 
 const {
     getAdmins,
-    upgradeToAdmin,
-    dismissAdmin
-} = require("../controllers/adminController");
+    addAdmin,
+    onlyAdmins,
+    dismissAdmin,
+} = require("../middleware/adminAuth");
 const { auth } = require("../middleware/auth");
 
-adminRoute.get("/getAdmins", auth, adminAuth, getAdmins);
-adminRoute.put("/upgrade/:id", auth, adminAuth, upgradeToAdmin);
-adminRoute.put("/dismiss/:id", auth, adminAuth, dismissAdmin);
+adminRoute.get("/getAdmins", auth, onlyAdmins, getAdmins);
+adminRoute.post("/addAdmin/:id", auth, onlyAdmins, addAdmin);
+adminRoute.delete("/dismiss/:id", auth, onlyAdmins, dismissAdmin);
 
 module.exports = {
   adminRoute,

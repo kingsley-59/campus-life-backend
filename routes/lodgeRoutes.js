@@ -1,9 +1,10 @@
 const express = require('express');
 const lodgeRoute = express.Router();
 const lodgeController = require('../controllers/lodgeController');
-// const { auth } = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 const upload = require('../middleware/multer');
 const validate = require('../middleware/validate');
+const { onlyAdmins } = require("../middleware/adminAuth");
 
 const uploadFields = [
     { name: 'lodgepicture', maxCount: 1 },
@@ -12,9 +13,9 @@ const uploadFields = [
 
 lodgeRoute.get('/lodge/:id', lodgeController.getLodge);
 lodgeRoute.get('/getLodges', lodgeController.getAllLodges);
-lodgeRoute.post('/', validate(lodgeController.validations), upload.fields(uploadFields), lodgeController.createLodge);
-lodgeRoute.put('/update/:id', validate(lodgeController.validations), lodgeController.updateLodge);
-lodgeRoute.delete('/:id', lodgeController.deleteLodge);
+lodgeRoute.post('/', auth, onlyAdmins, validate(lodgeController.validations), upload.fields(uploadFields), lodgeController.createLodge);
+lodgeRoute.put('/update/:id', auth, onlyAdmins, validate(lodgeController.validations), lodgeController.updateLodge);
+lodgeRoute.delete('/:id', auth, onlyAdmins, lodgeController.deleteLodge);
 
 lodgeRoute.post('/test/image', upload.fields(uploadFields), (req, res) => {
     const { lodgepicture, lodgemultiplepicture } = req.files;
