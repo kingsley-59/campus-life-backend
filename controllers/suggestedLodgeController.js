@@ -59,10 +59,8 @@ exports.suggestLodge = async (req, res) => {
             address, caretakernumber, email, fullname, institution, lat, lng,
             lodgedescription, lodgename, lodgeprice, lodgetown, lodgetype, phonenumber, 
         } = req.body;
-        const { lodgepicture, lodgemultiplepicture } = req.files;
-
-        const lodgePictureUrl = lodgepicture[0].path;
-        const imagesPaths = lodgemultiplepicture.map(image => image.path);
+        const lodgepicture = req.file;
+        const lodgePictureUrl = lodgepicture.path;
 
         const newSuggestion = new SuggestedLodge({ 
             address,
@@ -79,7 +77,6 @@ exports.suggestLodge = async (req, res) => {
             lodgetype,
             phonenumber,
             lodgepicture: lodgePictureUrl,
-            lodgemultiplepicture: imagesPaths,
         });
         await newSuggestion.save();
 
