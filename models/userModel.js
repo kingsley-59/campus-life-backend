@@ -16,11 +16,6 @@ const userSchema = new mongoose.Schema({
   googleId: {
     type: String,
   },
-  role: {
-    type: String,
-    default: "user",
-    enum: ["user", "admin", "superadmin"],
-  },
 });
 
 const User = mongoose.model("user", userSchema);

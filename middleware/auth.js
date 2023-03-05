@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
+const Admin = require("../models/adminModel");
 const jwt = require("jsonwebtoken");
 
 const secretKey = process.env.SECRET;
@@ -7,13 +8,6 @@ const secretKey = process.env.SECRET;
 const register = async (req, res) => {
   let { email, password } = req.body;
   const salt = await bcrypt.genSalt();
-  let role;
-
-  if (email === process.env.bossMail) {
-      role = "superadmin";
-  } else {
-      role = "user";
-  }
 
   bcrypt.hash(password, salt, async (err, hash) => {
     if (err) {
@@ -29,12 +23,10 @@ const register = async (req, res) => {
       const user = new User({
         email: email,
         password: hash,
-        lastName: req.body.lastName,
-        firstName: req.body.firstName,
+        fullname: req.body.fullname,
         institution: req.body.institution,
-        role: role
       });
-      user.save((err, user) => {
+      user.save(async (err, user) => {
         if (err) {
           res.status(500).send({
             data: {},
@@ -42,6 +34,14 @@ const register = async (req, res) => {
             status: 1,
           });
         } else {
+          if (email === process.env.bossMail) {
+            const superAdmin = new Admin({
+              email,
+              userId: user._id,
+              adminRole: "superadmin",
+            });
+            await superAdmin.save();
+          }
           res.status(201).send({
             data: user,
             message: "User registered successfully",

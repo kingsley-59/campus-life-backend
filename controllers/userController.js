@@ -12,7 +12,6 @@ const getUser = async (req, res) => {
         fullname: user.fullname,
         institution: user.institution,
         isVerified: user.isVerified,
-        role: user.role,
       },
       message: "Found user Details",
       status: 0,
