@@ -80,7 +80,7 @@ exports.validations = [
 exports.createLodge = async (req, res) => {
     try {
         const { 
-            address, caretakernumber, email, fullname, institution, lat, lng,
+            address, caretakernumber, email, fullname, institution, lat, lng, specifications,
             lodgedescription, lodgename, lodgeprice, lodgetown, lodgetype, phonenumber, 
         } = req.body;
         const { lodgepicture, lodgemultiplepicture } = req.files;
@@ -96,6 +96,7 @@ exports.createLodge = async (req, res) => {
             institution,
             lat,
             lng,
+            specifications,
             lodgedescription,
             lodgename,
             lodgeprice,

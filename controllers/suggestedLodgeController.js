@@ -56,7 +56,7 @@ exports.validations = [
 exports.suggestLodge = async (req, res) => {
     try {
         const { 
-            address, caretakernumber, email, fullname, institution, lat, lng,
+            address, caretakernumber, email, fullname, institution, lat, lng, specifications,
             lodgedescription, lodgename, lodgeprice, lodgetown, lodgetype, phonenumber, 
         } = req.body;
         const lodgepicture = req.file;
@@ -70,6 +70,7 @@ exports.suggestLodge = async (req, res) => {
             institution,
             lat,
             lng,
+            specifications,
             lodgedescription,
             lodgename,
             lodgeprice,
