@@ -13,6 +13,8 @@ const uploadFields = [
 
 lodgeRoute.get('/lodge/:id', lodgeController.getLodge);
 lodgeRoute.get('/getLodges', lodgeController.getAllLodges);
+lodgeRoute.get('/getLodgesByTown', lodgeController.getLodgesByTown);
+lodgeRoute.get('/getLodgesByTTI', lodgeController.getLodgesByTypeTownAndInstitution);
 lodgeRoute.post('/', auth, onlyAdmins, validate(lodgeController.validations), upload.fields(uploadFields), lodgeController.createLodge);
 lodgeRoute.put('/update/:id', auth, onlyAdmins, validate(lodgeController.validations), lodgeController.updateLodge);
 lodgeRoute.delete('/:id', auth, onlyAdmins, lodgeController.deleteLodge);

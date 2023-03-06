@@ -1,4 +1,5 @@
 const Admin = require("../models/adminModel.js");
+const User = require("../models/userModel.js");
 
 const onlyAdmins = async (req, res, next) => {
     try {
@@ -45,6 +46,8 @@ const addAdmin = async (req, res) => {
       });
   
       const createdAdmin = await newAdmin.save();
+      const data = { role: "admin" };
+      await User.findByIdAndUpdate(id, data);
   
       res.status(201).send({
         data: createdAdmin,

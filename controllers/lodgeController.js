@@ -34,6 +34,30 @@ exports.getLodge = async (req, res) => {
     }
 };
 
+exports.getLodgesByTown = async (req, res) => {
+    try {
+        let { town } = req.query;
+        const lodge = await Lodge.find({ lodgetown: town });
+
+        if (!lodge) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
+        return apiResponse.successResponseWithData(res, `Lodges in ${town}`, lodge);
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
+exports.getLodgesByTypeTownAndInstitution = async (req, res) => {
+    try {
+        let { town, type, institution } = req.query;
+        const lodge = await Lodge.find({ lodgetown: town, lodgetype: type, institution });
+
+        if (!lodge) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
+        return apiResponse.successResponseWithData(res, `${type} Lodges in ${town}, ${institution}`, lodge);
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
 exports.validations = [
     body('address'),
     body('caretakernumber'),
