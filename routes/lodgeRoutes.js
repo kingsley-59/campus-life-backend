@@ -11,7 +11,7 @@ const uploadFields = [
     { name: 'lodgemultiplepicture', maxCount: 12 },
 ];
 
-lodgeRoute.get('/lodge/:id', lodgeController.getLodge);
+lodgeRoute.get('/lodge/:id', auth, lodgeController.getLodge);
 lodgeRoute.get('/getLodges', lodgeController.getAllLodges);
 lodgeRoute.get('/getLodgesByTown', lodgeController.getLodgesByTown);
 lodgeRoute.get('/getLodgesByTTI', lodgeController.getLodgesByTypeTownAndInstitution);
