@@ -22,6 +22,9 @@ const lodgeSchema = new mongoose.Schema({
     lodgemultiplepicture: [{
         type: String,
     }],
+    specifications: [{
+        type: String,
+    }],
     lodgename: {
         type: String,
     },
@@ -49,6 +52,9 @@ const lodgeSchema = new mongoose.Schema({
     location: {
         type: String,
         coordinates: Array,
+    },
+    isFeatured: {
+        type: Boolean,
     },
 },
     { timestamps: true }

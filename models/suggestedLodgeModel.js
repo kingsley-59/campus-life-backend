@@ -22,6 +22,9 @@ const suggestedLodgeSchema = new mongoose.Schema({
     lodgemultiplepicture: [{
         type: String,
     }],
+    specifications: [{
+        type: String,
+    }],
     lodgename: {
         type: String,
     },
