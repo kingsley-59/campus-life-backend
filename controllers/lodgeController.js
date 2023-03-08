@@ -6,8 +6,8 @@ exports.getAllLodges = async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
         const lodges = await Lodge.find({})
-        .limit(limit * 1)
-        .skip((page - 1) * limit);
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
 
         // get total documents in the Posts collection 
         const count = await Lodge.estimatedDocumentCount();
@@ -40,8 +40,8 @@ exports.getLodgesByTown = async (req, res) => {
     try {
         const { town, page = 1, limit = 10 } = req.query;
         const lodges = await Lodge.find({ lodgetown: town })
-        .limit(limit * 1)
-        .skip((page - 1) * limit);
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
 
         // get total documents in the Posts collection 
         const count = await Lodge.countDocuments({ lodgetown: town });
@@ -63,8 +63,8 @@ exports.getLodgesByTypeTownAndInstitution = async (req, res) => {
     try {
         let { town, type, institution, page = 1, limit = 10 } = req.query;
         const lodges = await Lodge.find({ lodgetown: town, lodgetype: type, institution })
-        .limit(limit * 1)
-        .skip((page - 1) * limit);
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
 
         // get total documents in the Posts collection 
         const count = await Lodge.countDocuments();
@@ -72,7 +72,7 @@ exports.getLodgesByTypeTownAndInstitution = async (req, res) => {
             lodges,
             totalPages: Math.ceil(count / limit),
             currentPage: page,
-        };        
+        };
 
         if (!lodges) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
         return apiResponse.successResponseWithData(res, `${type} Lodges in ${town}, ${institution}`, data);
@@ -99,7 +99,7 @@ exports.validations = [
 
 exports.createLodge = async (req, res) => {
     try {
-        const { 
+        const {
             address, caretakernumber, institution, lat, lng, specifications,
             lodgedescription, lodgename, lodgeprice, lodgetown, lodgetype,
         } = req.body;
@@ -108,7 +108,7 @@ exports.createLodge = async (req, res) => {
         const lodgePictureUrl = lodgepicture[0].path;
         const imagesPaths = lodgemultiplepicture.map(image => image.path);
 
-        const newSuggestion = new Lodge({ 
+        const newSuggestion = new Lodge({
             address,
             caretakernumber,
             institution,
@@ -125,7 +125,7 @@ exports.createLodge = async (req, res) => {
         });
         await newSuggestion.save();
 
-        return apiResponse.successResponse(res, "New lodge has been added.");
+        return apiResponse.successResponseWithData(res, "New lodge has been added.", { data: newSuggestion.toObject() });
     } catch (error) {
         console.log(error);
         return apiResponse.ErrorResponse(res, error.message);
