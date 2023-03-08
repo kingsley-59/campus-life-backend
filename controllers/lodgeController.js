@@ -10,11 +10,12 @@ exports.getAllLodges = async (req, res) => {
         .skip((page - 1) * limit);
 
         // get total documents in the Posts collection 
-        const count = await Lodge.countDocuments();
+        const count = await Lodge.estimatedDocumentCount();
         const data = {
             lodges,
             totalPages: Math.ceil(count / limit),
             currentPage: page,
+            totalLodges: count
         };
 
         return apiResponse.successResponseWithData(res, "success", data);
@@ -43,11 +44,12 @@ exports.getLodgesByTown = async (req, res) => {
         .skip((page - 1) * limit);
 
         // get total documents in the Posts collection 
-        const count = await Lodge.countDocuments();
+        const count = await Lodge.countDocuments({ lodgetown: town });
         const data = {
             lodges,
             totalPages: Math.ceil(count / limit),
             currentPage: page,
+            totalLodgesByTown: count
         };
 
         if (!lodges) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
