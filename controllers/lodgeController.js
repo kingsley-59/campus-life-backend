@@ -127,7 +127,8 @@ exports.createLodge = async (req, res) => {
 
         return apiResponse.successResponse(res, "New lodge has been added.");
     } catch (error) {
-        return apiResponse.ErrorResponse(res, error);
+        console.log(error);
+        return apiResponse.ErrorResponse(res, error.message);
     }
 };
 
