@@ -33,9 +33,10 @@ userRoute.get(
   "/auth/google/callback",
   passport.authenticate("google", { session: false }),
   (req, res) => {
+    const user = req.user;
     jwt.sign(
-      { id: req.user._id },
-      process.env.secretKey,
+      { id: user._id },
+      process.env.SECRET,
       { expiresIn: "1h" },
       (err, token) => {
         if (err) {
@@ -43,8 +44,18 @@ userRoute.get(
             token: null,
           });
         }
-        res.json({
-          token,
+        res.status(200).json({
+          data: {
+            token,
+            id: user._id,
+            email: user.email,
+            role: user.role,
+            fullname: user.fullname,
+            phoneNumber: user.phoneNumber,
+            isVerified: user.isVerified,
+          },
+          message: "User logged in successfully",
+          status: 0,
         });
       }
     );

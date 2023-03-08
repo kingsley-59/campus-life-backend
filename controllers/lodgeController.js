@@ -1,22 +1,23 @@
 const apiResponse = require('../helpers/apiResponse');
 const Lodge = require('../models/lodgeModel');
 const { body } = require('express-validator');
-// const User = require('../models/userModel');
-
-// const getPagination = (page, size) => {
-//     const limit = size ? +size : 10;
-//     const offset = page ? page * limit : 0;
-
-//     return { limit, offset };
-// };
 
 exports.getAllLodges = async (req, res) => {
     try {
-        // const { page, size } = req.query;
-        // const { limit, offset } = getPagination(page, size);, {select: "-", offset, limit}
-        const lodges = await Lodge.find({});
+        const { page = 1, limit = 10 } = req.query;
+        const lodges = await Lodge.find({})
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
 
-        return apiResponse.successResponseWithData(res, "success", lodges);
+        // get total documents in the Posts collection 
+        const count = await Lodge.countDocuments();
+        const data = {
+            lodges,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+        };
+
+        return apiResponse.successResponseWithData(res, "success", data);
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }
@@ -36,11 +37,21 @@ exports.getLodge = async (req, res) => {
 
 exports.getLodgesByTown = async (req, res) => {
     try {
-        let { town } = req.query;
-        const lodge = await Lodge.find({ lodgetown: town });
+        const { town, page = 1, limit = 10 } = req.query;
+        const lodges = await Lodge.find({ lodgetown: town })
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
 
-        if (!lodge) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
-        return apiResponse.successResponseWithData(res, `Lodges in ${town}`, lodge);
+        // get total documents in the Posts collection 
+        const count = await Lodge.countDocuments();
+        const data = {
+            lodges,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+        };
+
+        if (!lodges) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
+        return apiResponse.successResponseWithData(res, `Lodges in ${town}`, data);
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }
@@ -48,11 +59,21 @@ exports.getLodgesByTown = async (req, res) => {
 
 exports.getLodgesByTypeTownAndInstitution = async (req, res) => {
     try {
-        let { town, type, institution } = req.query;
-        const lodge = await Lodge.find({ lodgetown: town, lodgetype: type, institution });
+        let { town, type, institution, page = 1, limit = 10 } = req.query;
+        const lodges = await Lodge.find({ lodgetown: town, lodgetype: type, institution })
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
 
-        if (!lodge) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
-        return apiResponse.successResponseWithData(res, `${type} Lodges in ${town}, ${institution}`, lodge);
+        // get total documents in the Posts collection 
+        const count = await Lodge.countDocuments();
+        const data = {
+            lodges,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+        };        
+
+        if (!lodges) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
+        return apiResponse.successResponseWithData(res, `${type} Lodges in ${town}, ${institution}`, data);
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }

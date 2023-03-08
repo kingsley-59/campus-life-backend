@@ -1,22 +1,25 @@
 const apiResponse = require('../helpers/apiResponse');
 const SuggestedLodge = require('../models/suggestedLodgeModel');
 const { body } = require('express-validator');
-// const User = require('../models/userModel');
-
-// const getPagination = (page, size) => {
-//     const limit = size ? +size : 10;
-//     const offset = page ? page * limit : 0;
-
-//     return { limit, offset };
-// };
 
 exports.getSuggestedLodges = async (req, res) => {
     try {
-        // const { page, size } = req.query;
-        // const { limit, offset } = getPagination(page, size);, {select: "-", offset, limit}
-        const lodges = await SuggestedLodge.find({});
+        // destructure page and limit and set default values
+        const { page = 1, limit = 10 } = req.query;
 
-        return apiResponse.successResponseWithData(res, "success", lodges);
+        const lodges = await SuggestedLodge.find({})
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
+
+        // get total documents in the Posts collection 
+        const count = await SuggestedLodge.countDocuments();
+        const data = {
+            lodges,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+        };
+
+        return apiResponse.successResponseWithData(res, "success", data);
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }
