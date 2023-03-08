@@ -7,12 +7,6 @@ const lodgeSchema = new mongoose.Schema({
     caretakernumber: {
         type: String,
     },
-    email: {
-        type: String,
-    },
-    fullname: {
-        type: String,
-    },
     institution: {
         type: String,
     },
@@ -38,9 +32,6 @@ const lodgeSchema = new mongoose.Schema({
         type: String,
     },
     lodgetype: {
-        type: String,
-    },
-    phonenumber: {
         type: String,
     },
     lat: {
