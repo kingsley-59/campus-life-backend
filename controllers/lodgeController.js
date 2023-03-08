@@ -82,8 +82,6 @@ exports.getLodgesByTypeTownAndInstitution = async (req, res) => {
 exports.validations = [
     body('address'),
     body('caretakernumber'),
-    body('email'),
-    body('fullname'),
     body('institution'),
     body('lodgedescription'),
     body('lodgemultiplepicture'),
@@ -92,7 +90,6 @@ exports.validations = [
     body('lodgeprice'),
     body('lodgetown'),
     body('lodgetype'),
-    body('phonenumber'),
     body('lat'),
     body('lng'),
     body('location'),
@@ -101,8 +98,8 @@ exports.validations = [
 exports.createLodge = async (req, res) => {
     try {
         const { 
-            address, caretakernumber, email, fullname, institution, lat, lng, specifications,
-            lodgedescription, lodgename, lodgeprice, lodgetown, lodgetype, phonenumber, 
+            address, caretakernumber, institution, lat, lng, specifications,
+            lodgedescription, lodgename, lodgeprice, lodgetown, lodgetype,
         } = req.body;
         const { lodgepicture, lodgemultiplepicture } = req.files;
 
@@ -112,8 +109,6 @@ exports.createLodge = async (req, res) => {
         const newSuggestion = new Lodge({ 
             address,
             caretakernumber,
-            email,
-            fullname,
             institution,
             lat,
             lng,
@@ -123,7 +118,6 @@ exports.createLodge = async (req, res) => {
             lodgeprice,
             lodgetown,
             lodgetype,
-            phonenumber,
             lodgepicture: lodgePictureUrl,
             lodgemultiplepicture: imagesPaths,
         });
