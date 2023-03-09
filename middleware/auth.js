@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 const Admin = require("../models/adminModel");
 const jwt = require("jsonwebtoken");
+const apiResponse = require('../helpers/apiResponse');
 
 const secretKey = process.env.SECRET;
 
@@ -104,14 +105,18 @@ const auth = (req, res, next) => {
       .status(401)
       .json({ msg: "No authenication token, authorization denied" });
 
-  const verfied = jwt.verify(token, process.env.SECRET);
-  if (!verfied)
-    return res
-      .status(401)
-      .json({ msg: "Token verification failed, authorization denied" });
+  try {
+    const verfied = jwt.verify(token, process.env.SECRET);
+    if (!verfied)
+      return res
+        .status(401)
+        .json({ msg: "Token verification failed, authorization denied" });
 
-  req.user = verfied.id;
-  next();
+    req.user = verfied.id;
+    next();
+  } catch (error) {
+    apiResponse.unauthorizedResponse(res, error.message);
+  }
 };
 
 const tokenIsValid = async (req, res) => {
