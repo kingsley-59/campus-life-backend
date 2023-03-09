@@ -77,7 +77,7 @@ const login = (req, res) => {
           });
         } else {
           const token = jwt.sign({ id: user._id }, secretKey, {
-            expiresIn: "1h",
+            expiresIn: "3d",
           });
           res.status(200).send({
             data: {
