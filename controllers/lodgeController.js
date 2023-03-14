@@ -1,6 +1,7 @@
 const apiResponse = require('../helpers/apiResponse');
 const Lodge = require('../models/lodgeModel');
 const { body } = require('express-validator');
+const { deleteImagesFromCloudinaryStorage } = require('../helpers/cloudinaryHelpers');
 
 exports.getAllLodges = async (req, res) => {
     try {
@@ -156,7 +157,17 @@ exports.updateLodgeImages = async (req, res) => {
         const lodgePictureUrl = lodgepicture[0].path;
         const imagesPaths = lodgemultiplepicture.map(image => image.path);
 
+        // get old lodge urls
+        const urls = [];
+        (async () => {
+            let lodge = await Lodge.findById(id);
+            urls.push(lodge.lodgepicture);
+            lodge.lodgemultiplepicture.forEach(url => urls.push(url));
+        })();
+
         const lodge = await Lodge.findByIdAndUpdate(id, {$set: {lodgepicture: lodgePictureUrl, lodgemultiplepicture: imagesPaths}}, {new: true});
+        await deleteImagesFromCloudinaryStorage(urls).catch(error => console.log(error));
+
         return apiResponse.successResponseWithData(res, 'Lodge images updated successfully', lodge.toObject());
     } catch (error) {
         console.log(error);
