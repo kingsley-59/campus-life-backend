@@ -182,6 +182,12 @@ exports.deleteLodge = async (req, res) => {
         const lodge = await Lodge.findByIdAndDelete(id, req.body);
         if (!lodge) return apiResponse.notFoundResponse(res, "Lodge not found");
 
+        // delete unused pictures from storage
+        const urls = [];
+        urls.push(lodge.lodgepicture);
+        lodge.lodgemultiplepicture.forEach(url => urls.push(url));
+        await deleteImagesFromCloudinaryStorage(urls).catch(error => console.log(error));
+
         return apiResponse.successResponseWithData(res, "Lodge deleted successfully.", lodge);
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
