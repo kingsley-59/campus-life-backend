@@ -145,6 +145,22 @@ exports.updateLodge = async (req, res) => {
     }
 };
 
+exports.updateLodgeImages = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { lodgepicture, lodgemultiplepicture } = req.files;
+
+        const lodgePictureUrl = lodgepicture[0].path;
+        const imagesPaths = lodgemultiplepicture.map(image => image.path);
+
+        const lodge = await Lodge.findByIdAndUpdate(id, {$set: {lodgepicture: lodgePictureUrl, lodgemultiplepicture: imagesPaths}}, {new: true});
+        return apiResponse.successResponseWithData(res, 'Lodge images updated successfully', lodge.toObject());
+    } catch (error) {
+        console.log(error);
+        return apiResponse.ErrorResponse(res, error.message);
+    }
+};
+
 exports.deleteLodge = async (req, res) => {
     try {
         const { id } = req.params;
