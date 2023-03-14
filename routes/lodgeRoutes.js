@@ -17,6 +17,7 @@ lodgeRoute.get('/getLodgesByTown', lodgeController.getLodgesByTown);
 lodgeRoute.get('/getLodgesByTTI', lodgeController.getLodgesByTypeTownAndInstitution);
 lodgeRoute.post('/', auth, onlyAdmins, validate(lodgeController.validations), upload.fields(uploadFields), lodgeController.createLodge);
 lodgeRoute.put('/update/:id', auth, onlyAdmins, validate(lodgeController.validations), lodgeController.updateLodge);
+lodgeRoute.put('/updateLodgeImages/:id', auth, onlyAdmins, upload.fields(uploadFields), lodgeController.updateLodgeImages);
 lodgeRoute.delete('/:id', auth, onlyAdmins, lodgeController.deleteLodge);
 
 lodgeRoute.post('/test/image', upload.fields(uploadFields), (req, res) => {
