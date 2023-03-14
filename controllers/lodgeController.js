@@ -7,7 +7,8 @@ exports.getAllLodges = async (req, res) => {
         const { page = 1, limit = 10 } = req.query;
         const lodges = await Lodge.find({})
             .limit(limit * 1)
-            .skip((page - 1) * limit);
+            .skip((page - 1) * limit)
+            .sort({createdAt: 'desc'});
 
         // get total documents in the Posts collection 
         const count = await Lodge.estimatedDocumentCount();
@@ -41,7 +42,8 @@ exports.getLodgesByTown = async (req, res) => {
         const { town, page = 1, limit = 10 } = req.query;
         const lodges = await Lodge.find({ lodgetown: town })
             .limit(limit * 1)
-            .skip((page - 1) * limit);
+            .skip((page - 1) * limit)
+            .sort({createdAt: 'desc'});
 
         // get total documents in the Posts collection 
         const count = await Lodge.countDocuments({ lodgetown: town });
@@ -64,7 +66,8 @@ exports.getLodgesByTypeTownAndInstitution = async (req, res) => {
         let { town, type, institution, page = 1, limit = 10 } = req.query;
         const lodges = await Lodge.find({ lodgetown: town, lodgetype: type, institution })
             .limit(limit * 1)
-            .skip((page - 1) * limit);
+            .skip((page - 1) * limit)
+            .sort({createdAt: 'desc'});
 
         // get total documents in the Posts collection 
         const count = await Lodge.countDocuments();
