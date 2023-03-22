@@ -112,6 +112,9 @@ exports.createLodge = async (req, res) => {
         const lodgePictureUrl = lodgepicture[0].path;
         const imagesPaths = lodgemultiplepicture.map(image => image.path);
 
+        const lodgeAlreadyExists = await Lodge.findOne({lodgename});
+        if (lodgeAlreadyExists) return apiResponse.badRequestResponse(res, "Lodge with this name already exists");
+
         const newSuggestion = new Lodge({
             address,
             caretakernumber,
