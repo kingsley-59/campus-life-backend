@@ -9,7 +9,7 @@ exports.getAllLodges = async (req, res) => {
         const lodges = await Lodge.find({})
             .limit(limit * 1)
             .skip((page - 1) * limit)
-            .sort({createdAt: 'desc'});
+            .sort({ createdAt: 'desc' });
 
         // get total documents in the Posts collection 
         const count = await Lodge.estimatedDocumentCount();
@@ -41,13 +41,13 @@ exports.getLodge = async (req, res) => {
 exports.getLodgesByTown = async (req, res) => {
     try {
         const { town, page = 1, limit = 10 } = req.query;
-        const lodges = await Lodge.find({ lodgetown: town })
+        const lodges = await Lodge.find({ lodgetown: { $regex: `/${town}/i` } })
             .limit(limit * 1)
             .skip((page - 1) * limit)
-            .sort({createdAt: 'desc'});
+            .sort({ createdAt: 'desc' });
 
         // get total documents in the Posts collection 
-        const count = await Lodge.countDocuments({ lodgetown: town });
+        const count = await Lodge.countDocuments({ lodgetown: { $regex: `/${town}/i` } });
         const data = {
             lodges,
             totalPages: Math.ceil(count / limit),
@@ -65,10 +65,10 @@ exports.getLodgesByTown = async (req, res) => {
 exports.getLodgesByTypeTownAndInstitution = async (req, res) => {
     try {
         let { town, type, institution, page = 1, limit = 10 } = req.query;
-        const lodges = await Lodge.find({ lodgetown: town, lodgetype: type, institution })
+        const lodges = await Lodge.find({ lodgetown: { $regex: `/${town}/i` }, lodgetype: type, institution })
             .limit(limit * 1)
             .skip((page - 1) * limit)
-            .sort({createdAt: 'desc'});
+            .sort({ createdAt: 'desc' });
 
         // get total documents in the Posts collection 
         const count = await Lodge.countDocuments();
@@ -112,7 +112,7 @@ exports.createLodge = async (req, res) => {
         const lodgePictureUrl = lodgepicture[0].path;
         const imagesPaths = lodgemultiplepicture.map(image => image.path);
 
-        const lodgeAlreadyExists = await Lodge.findOne({lodgename});
+        const lodgeAlreadyExists = await Lodge.findOne({ lodgename });
         if (lodgeAlreadyExists) return apiResponse.badRequestResponse(res, "Lodge with this name already exists");
 
         const newSuggestion = new Lodge({
@@ -168,7 +168,7 @@ exports.updateLodgeImages = async (req, res) => {
             lodge.lodgemultiplepicture.forEach(url => urls.push(url));
         })();
 
-        const lodge = await Lodge.findByIdAndUpdate(id, {$set: {lodgepicture: lodgePictureUrl, lodgemultiplepicture: imagesPaths}}, {new: true});
+        const lodge = await Lodge.findByIdAndUpdate(id, { $set: { lodgepicture: lodgePictureUrl, lodgemultiplepicture: imagesPaths } }, { new: true });
         await deleteImagesFromCloudinaryStorage(urls).catch(error => console.log(error));
 
         return apiResponse.successResponseWithData(res, 'Lodge images updated successfully', lodge.toObject());
