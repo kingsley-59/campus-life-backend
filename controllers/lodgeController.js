@@ -41,13 +41,13 @@ exports.getLodge = async (req, res) => {
 exports.getLodgesByTown = async (req, res) => {
     try {
         const { town, page = 1, limit = 10 } = req.query;
-        const lodges = await Lodge.find({ lodgetown: { $regex: `/${town}/i` } })
+        const lodges = await Lodge.find({ lodgetown: { $regex: town, $options: 'i' } })
             .limit(limit * 1)
             .skip((page - 1) * limit)
             .sort({ createdAt: 'desc' });
 
         // get total documents in the Posts collection 
-        const count = await Lodge.countDocuments({ lodgetown: { $regex: `/${town}/i` } });
+        const count = await Lodge.countDocuments({ lodgetown:{ $regex: town, $options: 'i' } });
         const data = {
             lodges,
             totalPages: Math.ceil(count / limit),
@@ -65,7 +65,7 @@ exports.getLodgesByTown = async (req, res) => {
 exports.getLodgesByTypeTownAndInstitution = async (req, res) => {
     try {
         let { town, type, institution, page = 1, limit = 10 } = req.query;
-        const lodges = await Lodge.find({ lodgetown: { $regex: `/${town}/i` }, lodgetype: type, institution })
+        const lodges = await Lodge.find({ lodgetown: { $regex: town, $options: 'i' }, lodgetype: type, institution })
             .limit(limit * 1)
             .skip((page - 1) * limit)
             .sort({ createdAt: 'desc' });
