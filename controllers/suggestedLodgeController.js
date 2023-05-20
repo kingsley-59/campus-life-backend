@@ -8,8 +8,8 @@ exports.getSuggestedLodges = async (req, res) => {
         const { page = 1, limit = 10 } = req.query;
 
         const lodges = await SuggestedLodge.find({})
-        .limit(limit * 1)
-        .skip((page - 1) * limit);
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
 
         // get total documents in the Posts collection 
         const count = await SuggestedLodge.countDocuments();
@@ -54,18 +54,24 @@ exports.validations = [
     body('lat'),
     body('lng'),
     body('location'),
+    body('waterrating'),
+    body('hasAuxiliarypower'),
+    body('auxiliarypowertype'),
+    body('isAvailable'),
+    body('availablespace'),
 ];
 
 exports.suggestLodge = async (req, res) => {
     try {
-        const { 
+        const {
             address, caretakernumber, email, fullname, institution, lat, lng, specifications,
-            lodgedescription, lodgename, lodgeprice, lodgetown, lodgetype, phonenumber, 
+            lodgedescription, lodgename, lodgeprice, lodgetown, lodgetype, phonenumber,
+            waterrating, hasAuxiliarypower, auxiliarypowertype, isAvailable, availablespace,
         } = req.body;
         const lodgepicture = req.file;
         const lodgePictureUrl = lodgepicture.path;
 
-        const newSuggestion = new SuggestedLodge({ 
+        const newSuggestion = new SuggestedLodge({
             address,
             caretakernumber,
             email,
@@ -81,6 +87,11 @@ exports.suggestLodge = async (req, res) => {
             lodgetype,
             phonenumber,
             lodgepicture: lodgePictureUrl,
+            waterrating,
+            hasAuxiliarypower,
+            auxiliarypowertype,
+            isAvailable,
+            availablespace,
         });
         await newSuggestion.save();
 

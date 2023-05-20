@@ -3,6 +3,8 @@ const Lodge = require('../models/lodgeModel');
 const { body } = require('express-validator');
 const { deleteImagesFromCloudinaryStorage } = require('../helpers/cloudinaryHelpers');
 
+// lodges with auxiliary power & overall
+
 exports.getAllLodges = async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
@@ -12,6 +14,52 @@ exports.getAllLodges = async (req, res) => {
             .sort({ createdAt: 'desc' });
 
         // get total documents in the Posts collection 
+        const count = await Lodge.estimatedDocumentCount();
+        const data = {
+            lodges,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            totalLodges: count
+        };
+
+        return apiResponse.successResponseWithData(res, "success", data);
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
+exports.getAllAvailableLodges = async (req, res) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+        const lodges = await Lodge.find({ isAvailable: true })
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .sort({ createdAt: 'desc' });
+
+        // get total documents in the Lodges collection 
+        const count = await Lodge.estimatedDocumentCount();
+        const data = {
+            lodges,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            totalLodges: count
+        };
+
+        return apiResponse.successResponseWithData(res, "success", data);
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
+exports.getAllPoweredUpLodges = async (req, res) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+        const lodges = await Lodge.find({ hasAuxiliarypower: true })
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .sort({ createdAt: 'desc' });
+
+        // get total documents in the Lodges collection 
         const count = await Lodge.estimatedDocumentCount();
         const data = {
             lodges,
@@ -46,8 +94,56 @@ exports.getLodgesByTown = async (req, res) => {
             .skip((page - 1) * limit)
             .sort({ createdAt: 'desc' });
 
-        // get total documents in the Posts collection 
-        const count = await Lodge.countDocuments({ lodgetown:{ $regex: town, $options: 'i' } });
+        // get total documents in the Lodges collection 
+        const count = await Lodge.countDocuments({ lodgetown: { $regex: town, $options: 'i' } });
+        const data = {
+            lodges,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            totalLodgesByTown: count
+        };
+
+        if (!lodges) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
+        return apiResponse.successResponseWithData(res, `Lodges in ${town}`, data);
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
+exports.getAvailableLodgesByTown = async (req, res) => {
+    try {
+        const { town, page = 1, limit = 10 } = req.query;
+        const lodges = await Lodge.find({ lodgetown: { $regex: town, $options: 'i' }, isAvailable: true })
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .sort({ createdAt: 'desc' });
+
+        // get total documents in the Lodges collection 
+        const count = await Lodge.countDocuments({ lodgetown: { $regex: town, $options: 'i' } });
+        const data = {
+            lodges,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            totalLodgesByTown: count
+        };
+
+        if (!lodges) return apiResponse.notFoundResponse(res, "Lodges in that town are not available.");
+        return apiResponse.successResponseWithData(res, `Lodges in ${town}`, data);
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
+exports.getPoweredUpLodgesByTown = async (req, res) => {
+    try {
+        const { town, page = 1, limit = 10 } = req.query;
+        const lodges = await Lodge.find({ lodgetown: { $regex: town, $options: 'i' }, hasAuxiliarypower: true })
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .sort({ createdAt: 'desc' });
+
+        // get total documents in the Lodges collection 
+        const count = await Lodge.countDocuments({ lodgetown: { $regex: town, $options: 'i' } });
         const data = {
             lodges,
             totalPages: Math.ceil(count / limit),
@@ -70,7 +166,7 @@ exports.getLodgesByTypeTownAndInstitution = async (req, res) => {
             .skip((page - 1) * limit)
             .sort({ createdAt: 'desc' });
 
-        // get total documents in the Posts collection 
+        // get total documents in the Lodges collection 
         const count = await Lodge.countDocuments();
         const data = {
             lodges,
@@ -99,6 +195,11 @@ exports.validations = [
     body('lat'),
     body('lng'),
     body('location'),
+    body('waterrating'),
+    body('hasAuxiliarypower'),
+    body('auxiliarypowertype'),
+    body('isAvailable'),
+    body('availablespace'),
 ];
 
 exports.createLodge = async (req, res) => {
@@ -106,6 +207,7 @@ exports.createLodge = async (req, res) => {
         const {
             address, caretakernumber, institution, lat, lng, specifications,
             lodgedescription, lodgename, lodgeprice, lodgetown, lodgetype,
+            waterrating, hasAuxiliarypower, auxiliarypowertype, isAvailable, availablespace,
         } = req.body;
         const { lodgepicture, lodgemultiplepicture } = req.files;
 
@@ -129,6 +231,11 @@ exports.createLodge = async (req, res) => {
             lodgetype,
             lodgepicture: lodgePictureUrl,
             lodgemultiplepicture: imagesPaths,
+            waterrating,
+            hasAuxiliarypower,
+            auxiliarypowertype,
+            isAvailable,
+            availablespace,
         });
         await newSuggestion.save();
 

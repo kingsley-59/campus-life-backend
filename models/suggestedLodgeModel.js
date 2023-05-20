@@ -53,6 +53,21 @@ const suggestedLodgeSchema = new mongoose.Schema({
         type: String,
         coordinates: Array,
     },
+    waterrating: {
+        type: Number,
+    },
+    hasAuxiliarypower: {
+        type: Boolean,
+    },
+    auxiliarypowertype: {
+        type: String
+    },
+    isAvailable: {
+        type: Boolean
+    },
+    availablespace: {
+        type: String,
+    },
 },
     { timestamps: true }
 );

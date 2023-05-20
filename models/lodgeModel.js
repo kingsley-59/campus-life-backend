@@ -47,6 +47,21 @@ const lodgeSchema = new mongoose.Schema({
     isFeatured: {
         type: Boolean,
     },
+    waterrating: {
+        type: Number,
+    },
+    hasAuxiliarypower: {
+        type: Boolean,
+    },
+    auxiliarypowertype: {
+        type: String
+    },
+    isAvailable: {
+        type: Boolean
+    },
+    availablespace: {
+        type: String,
+    },
 },
     { timestamps: true }
 );
