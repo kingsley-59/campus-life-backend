@@ -2,6 +2,8 @@ const apiResponse = require('../helpers/apiResponse');
 const Lodge = require('../models/lodgeModel');
 const { body } = require('express-validator');
 const { deleteImagesFromCloudinaryStorage } = require('../helpers/cloudinaryHelpers');
+const User = require('../models/userModel');
+const LodgeSuggestion = require('../models/lodgeSuggestion');
 
 // lodges with auxiliary power & overall
 
@@ -299,6 +301,117 @@ exports.deleteLodge = async (req, res) => {
         await deleteImagesFromCloudinaryStorage(urls).catch(error => console.log(error));
 
         return apiResponse.successResponseWithData(res, "Lodge deleted successfully.", lodge);
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
+
+// New Controllers for platform OS
+exports.getLodgeSuggestions = async (req, res) => {
+    const { page = 1, limit = 10, flag } = req.query;
+    try {
+        const query = flag ? {flag: flag} : {};
+        const suggestions = await LodgeSuggestion.find(query)
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .sort({ createdAt: 'desc' });
+
+        // get total documents in the Posts collection 
+        const count = await LodgeSuggestion.estimatedDocumentCount();
+        const data = {
+            suggestions,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+            totalSuggestion: count
+        };
+
+        return apiResponse.successResponseWithData(res, "success", data);
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
+exports.createSuggestion = async (req, res) => {
+    const userId = req.user;
+    let { lodgeId, feature, newValue } = req.body;
+    const { lodgepicture, lodgemultiplepicture } = req.files;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) return apiResponse.unauthorizedResponse(res, "User no longer exist");
+
+        const lodge = await Lodge.findById(lodgeId);
+        if (!lodge) return apiResponse.notFoundResponse(res, "Lodge was not found.");
+
+        // check if feature is among the valid properties
+        if (Array(Lodge.immutableProperties).includes(feature)) {
+            return apiResponse.badRequestResponse(res, `You cannot suggest an update for lodge feature: ${feature}`);
+        }
+
+        if (lodgepicture) {
+            newValue = lodgepicture[0].path;
+        }
+
+        if (lodgemultiplepicture) {
+            newValue = lodgemultiplepicture.map(image => image.path).join('|');
+        }
+
+        const newSuggestion = new LodgeSuggestion({
+            lodge: lodgeId,
+            suggestedBy: userId,
+            feature, newValue
+        });
+        await newSuggestion.save();
+
+        return apiResponse.successResponseWithData(res, "Suggestion has need noted.", newSuggestion.toObject());
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
+exports.mergeSuggestion = async (req, res) => {
+    const { suggestionId } = req.params;
+    try {
+        const suggestion = await LodgeSuggestion.findById(suggestionId);
+        if (!suggestion) return apiResponse.notFoundResponse(res, "Lodge suggestion no longer exists");
+
+        const lodge = await Lodge.findById(suggestion.lodge);
+        if (!lodge) return apiResponse.notFoundResponse(res, "Lodge to be updated no longer exists");
+
+        let images = [];
+        if (suggestion.feature == 'lodgemultiplepicture') {
+            let urls = suggestion.newValue.split('|');
+            images.concat(urls);
+            lodge.lodgemultiplepicture = images;
+            await lodge.save();
+
+            return apiResponse.successResponse(res, "Suggestion has been merged");
+        }
+
+        lodge[suggestion.feature] = suggestion.newValue;
+        await lodge.save();
+
+        suggestion.isMerged = true;
+        suggestion.flag = 'merged';
+        await suggestion.save();
+
+        return apiResponse.successResponse(res, "Suggestion has been merged");
+    } catch (error) {
+        return apiResponse.ErrorResponse(res, error);
+    }
+};
+
+exports.flagSuggestion = async (req, res) => {
+    const { suggestionId, flag } = req.params;
+    try {
+        const suggestion = await LodgeSuggestion.findById(suggestionId);
+        if (!suggestion) return apiResponse.notFoundResponse(res, "Lodge suggestion no longer exists");
+
+        suggestion.flag = flag;
+        await suggestion.save();
+
+        return apiResponse.successResponseWithData(res, "Suggestion has been flagged", suggestion.toObject());
     } catch (error) {
         return apiResponse.ErrorResponse(res, error);
     }
