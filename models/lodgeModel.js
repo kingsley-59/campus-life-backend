@@ -21,12 +21,15 @@ const lodgeSchema = new mongoose.Schema({
     }],
     lodgename: {
         type: String,
+        required: true
     },
     lodgepicture: {
         type: String,
+        required: true
     },
     lodgeprice: {
         type: String,
+        required: true
     },
     lodgetown: {
         type: String,

@@ -12,13 +12,16 @@ const {
   updateUser,
   deleteUser,
 } = require("../controllers/userController");
-const { register, login, auth, tokenIsValid } = require("../middleware/auth");
+const { register, login, auth, tokenIsValid, refreshAccessToken } = require("../middleware/auth");
 
 userRoute.get("/getUser/:id", auth, getUser);
 userRoute.get("/getUsers", auth, onlyAdmins, getUsers);
+userRoute.get("/refresh", refreshAccessToken);
+
 userRoute.post("/register", register);
 userRoute.post("/login", login);
 userRoute.post("/tokenIsValid", tokenIsValid);
+
 userRoute.put("/updateUser/:id", auth, updateUser);
 userRoute.delete("/deleteUser/:id", auth, deleteUser);
 
