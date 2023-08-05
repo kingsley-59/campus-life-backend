@@ -54,6 +54,11 @@ const register = async (req, res) => {
   });
 };
 
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Request} res 
+ */
 const login = (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email: email }, async (err, user) => {
@@ -77,8 +82,12 @@ const login = (req, res) => {
           });
         } else {
           const token = jwt.sign({ id: user._id }, secretKey, {
+            expiresIn: "1h",
+          });
+          const refreshToken = jwt.sign({ id: user._id }, secretKey, {
             expiresIn: "3d",
           });
+          res.cookies('refreshToken', refreshToken);
           res.status(200).send({
             data: {
               token,
@@ -96,6 +105,25 @@ const login = (req, res) => {
       });
     }
   });
+};
+
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ */
+const refreshAccessToken = (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  try {
+    const verified = jwt.verify(refreshToken, process.env.SECRET);
+    if (!verified) return apiResponse.unauthorizedResponse(res, "Refresh token has expired. Please login");
+
+    const newToken = jwt.sign({ id: verified._id }, secretKey, { expiresIn: "1h", });
+    return res.status(200).json({ accessToken: newToken });
+  } catch (error) {
+    apiResponse.unauthorizedResponse(res, error.message);
+  }
 };
 
 const auth = (req, res, next) => {
@@ -141,4 +169,5 @@ module.exports = {
   login,
   auth,
   tokenIsValid,
+  refreshAccessToken,
 };
