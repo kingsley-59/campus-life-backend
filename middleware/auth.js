@@ -57,7 +57,7 @@ const register = async (req, res) => {
 /**
  * 
  * @param {import("express").Request} req 
- * @param {import("express").Request} res 
+ * @param {import("express").Response} res 
  */
 const login = (req, res) => {
   const { email, password } = req.body;
@@ -87,7 +87,7 @@ const login = (req, res) => {
           const refreshToken = jwt.sign({ id: user._id }, secretKey, {
             expiresIn: "3d",
           });
-          res.cookies('refreshToken', refreshToken);
+          res.cookie('refreshToken', refreshToken, { sameSite: "none", httpOnly: true, maxAge: 60 * 60 * 24 * 1000 });
           res.status(200).send({
             data: {
               token,
