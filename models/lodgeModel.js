@@ -66,6 +66,10 @@ const lodgeSchema = new mongoose.Schema({
     { timestamps: true }
 );
 
+lodgeSchema.statics.immutableProperties = [
+    'isFeatured', 'createdAt', 'updatedAt',
+];
+
 const Lodge = mongoose.model('lodge', lodgeSchema);
 
 module.exports = Lodge;
